@@ -5,8 +5,11 @@ import { RouterLink, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import { ref } from "vue";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { EnumModeErrorResponse } from "../../ts/enums";
+import { doc, getDoc } from "firebase/firestore";
+import { userStore } from "../../stores/user-store";
+import { UserDataType } from "../../ts/types";
 
 const schema = {
   email: Yup.string().required("Email is required").email("Email is invalid"),
@@ -17,15 +20,24 @@ const schema = {
 
 const router = useRouter();
 
+const store = userStore();
+
 const isPwd = ref(true);
 const loading = ref(false);
 
 const onSubmit = async (values: any) => {
   loading.value = true;
   await signInWithEmailAndPassword(auth, values.email, values.password)
-    .then((res: any) => {
+    .then(async (res: any) => {
       if (res) {
+        await getDoc(doc(db, 'users', res.user.uid)).then((res) => {
+          const data = res.data();
+          if (data) {
+            store.setUser(data as UserDataType)
+          }
+        })
         localStorage.setItem("token", res._tokenResponse.idToken);
+        localStorage.setItem("id", res.user.uid);
         toast.success("Login successfully", {
           onClose: () => {
             router.push({
