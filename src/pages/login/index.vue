@@ -30,12 +30,12 @@ const onSubmit = async (values: any) => {
   await signInWithEmailAndPassword(auth, values.email, values.password)
     .then(async (res: any) => {
       if (res) {
-        await getDoc(doc(db, 'users', res.user.uid)).then((res) => {
+        await getDoc(doc(db, "users", res.user.uid)).then((res) => {
           const data = res.data();
           if (data) {
-            store.setUser(data as UserDataType)
+            store.setUser(data as UserDataType);
           }
-        })
+        });
         localStorage.setItem("token", res._tokenResponse.idToken);
         localStorage.setItem("id", res.user.uid);
         toast.success("Login successfully", {
@@ -59,6 +59,9 @@ const onSubmit = async (values: any) => {
       }
       if (err.code === EnumModeErrorResponse.WRONG_PASSWORD) {
         return toast.error("Password invalid...");
+      }
+      if (err.code === EnumModeErrorResponse.INVALID_CREDENTIAL) {
+        return toast.error("Email or Password invalid...");
       }
     });
 };
