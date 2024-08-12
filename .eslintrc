@@ -1,11 +1,18 @@
 {
-    "env": {
-        "node": true
+  "env": {
+    "node": true,
+  },
+  "extends": ["eslint:recommended", "plugin:vue/vue3-recommended", "prettier"],
+  "rules": {},
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".ts", ".js", ".tsx", ".json", ".vue"],
+      },
+      "typescript": {
+        "alwaysTryTypes": true,
+      },
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:vue/vue3-recommended",
-        "prettier"
-    ],
-    "rules": {}
+  },
 }

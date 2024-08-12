@@ -1,6 +1,7 @@
 export type UserDataType = {
-    id: string;
-    fullname: string;
-    email: string;
-    avatar: string;
-}
+  id: string;
+  fullname: string;
+  email: string;
+  avatar: string;
+  isConnected: boolean;
+};

@@ -68,11 +68,20 @@ const onSubmit = async (values: any) => {
 </script>
 
 <template>
+  <q-inner-loading
+    :showing="loading"
+    :dark="true"
+    color="white"
+    label="Please wait..."
+    label-class="text-white"
+    label-style="font-size: 1.1em; font-weight: bold"
+    class="z-[1000]"
+  />
   <div
     class="background-auth bg-gray-7 flex flex-justify-center flex-items-center"
   >
     <div
-      class="bg-white flex flex-col flex-justify-center flex-items-center p-8 border-rd-xl"
+      class="bg-gray-300 flex flex-col flex-justify-center flex-items-center p-8 border-rd-xl"
     >
       <span class="font-medium text-md text-gray-5">Welcome back! 👋</span>
       <span class="text-3xl font-bold mb-8">Login to your account</span>
@@ -112,16 +121,10 @@ const onSubmit = async (values: any) => {
             </div>
             <div class="invalid-feedback">{{ errors.password }}</div>
           </div>
-          <q-btn
-            color="primary"
-            label="Login"
-            type="submit"
-            size="15px"
-            :loading="loading"
-          />
+          <q-btn color="primary" label="Login" type="submit" size="15px" />
         </Form>
         <div class="font-medium text-sm mt-3 text-center">
-          <span class="text-gray-4"
+          <span class="text-gray-6"
             >Create an new account?
             <router-link to="/sign-up">Sign-up</router-link></span
           >
