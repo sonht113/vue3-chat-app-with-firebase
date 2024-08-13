@@ -7,9 +7,10 @@ import { ref } from "vue";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { EnumModeErrorResponse } from "../../ts/enums";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { userStore } from "../../stores/user-store";
 import { UserDataType } from "../../ts/types";
+import sessionStorageUtils from "../../utils/storage";
 
 const schema = {
   email: Yup.string().required("Email is required").email("Email is invalid"),
@@ -30,14 +31,18 @@ const onSubmit = async (values: any) => {
   await signInWithEmailAndPassword(auth, values.email, values.password)
     .then(async (res: any) => {
       if (res) {
+        console.log("🚀 ~ .then ~ res:", res);
+        await updateDoc(doc(db, "users", res.user.uid), {
+          isConnected: true,
+        });
         await getDoc(doc(db, "users", res.user.uid)).then((res) => {
           const data = res.data();
           if (data) {
             store.setUser(data as UserDataType);
           }
         });
-        localStorage.setItem("token", res._tokenResponse.idToken);
-        localStorage.setItem("id", res.user.uid);
+        sessionStorageUtils.set("token", res._tokenResponse.idToken);
+        sessionStorageUtils.set("id", res.user.uid);
         toast.success("Login successfully", {
           onClose: () => {
             router.push({

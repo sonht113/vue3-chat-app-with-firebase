@@ -3,6 +3,7 @@ import {
   createRouter,
   createWebHistory,
 } from "vue-router";
+import sessionStorageUtils from "../utils/storage";
 
 const isServer = typeof window === "undefined";
 const history = isServer ? createMemoryHistory() : createWebHistory();
@@ -37,7 +38,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to, _from, next) => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorageUtils.get("token");
+  // const id = sessionStorageUtils.get("id");
+  // if(id) {
+
+  // }
   if (token || to.name === "Login" || to.name === "SignUp") {
     next();
   } else {

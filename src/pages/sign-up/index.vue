@@ -36,6 +36,9 @@ const onSubmit = async (values: any) => {
         fullname: values.fullname,
         email: values.email,
         avatar: "",
+        isConnected: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }).then(() => {
         toast.success("Sign up successfully", {
           onClose: () => {

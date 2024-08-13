@@ -4,4 +4,6 @@ export type UserDataType = {
   email: string;
   avatar: string;
   isConnected: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };

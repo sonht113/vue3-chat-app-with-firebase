@@ -5,55 +5,104 @@
     <router-link to="/home">
       <q-icon name="chat" size="30px" color="white" class="cursor-pointer" />
     </router-link>
-    <q-avatar size="50px" class="cursor-pointer">
-      <img src="https://cdn.quasar.dev/img/avatar4.jpg" />
-      <q-menu>
-        <div class="row no-wrap q-pa-md">
-          <div class="column">
-            <div class="text-h6 q-mb-md">Settings</div>
-            <q-list dense padding>
-              <q-item clickable v-ripple>
-                <q-item-section> Change infor </q-item-section>
-              </q-item>
-
-              <q-item clickable v-ripple>
-                <q-item-section> Item </q-item-section>
-              </q-item>
-
-              <q-item clickable v-ripple>
-                <q-item-section> Item </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
-          <q-separator vertical inset class="q-mx-lg" />
-          <div class="column items-center">
-            <q-avatar size="72px">
-              <img src="https://cdn.quasar.dev/img/avatar4.jpg" />
-            </q-avatar>
-            <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
-            <q-btn
-              color="primary"
-              label="Logout"
-              push
-              size="sm"
-              v-close-popup
-              @click="logout"
-            />
-          </div>
-        </div>
-      </q-menu>
-    </q-avatar>
+    <div class="flex items-center gap-8">
+      <font-awesome-icon
+        :icon="['fas', 'user-secret']"
+        class="text-white text-xl"
+      />
+      <q-icon name="chat" size="30px" color="white" class="cursor-pointer" />
+      <div>
+        <q-avatar v-if="userData" size="50px" class="cursor-pointer">
+          <img
+            :src="userData.avatar || 'https://cdn.quasar.dev/img/avatar4.jpg'"
+          />
+          <q-menu>
+            <div class="row no-wrap q-pa-md">
+              <div class="column">
+                <div class="text-h6 q-mb-md">Settings</div>
+                <q-list style="min-width: 100px">
+                  <q-item clickable v-close-popup>
+                    <q-item-section>Profile</q-item-section>
+                  </q-item>
+                  <q-separator />
+                  <q-item clickable v-close-popup>
+                    <q-item-section>Recent tabs</q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup>
+                    <q-item-section>History</q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+              <q-separator vertical inset class="q-mx-md" />
+              <div class="column items-center">
+                <q-avatar size="72px">
+                  <img
+                    :src="
+                      userData.avatar ||
+                      'https://cdn.quasar.dev/img/avatar4.jpg'
+                    "
+                  />
+                </q-avatar>
+                <div class="text-subtitle1 q-mt-md q-mb-xs uppercase">
+                  {{ userData.fullname }}
+                </div>
+                <q-btn
+                  color="primary"
+                  label="Logout"
+                  push
+                  size="sm"
+                  :loading="loading"
+                  @click="logout"
+                />
+              </div>
+            </div>
+          </q-menu>
+        </q-avatar>
+        <q-skeleton v-else size="50px" type="circle" />
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
+import { doc, updateDoc } from "firebase/firestore";
 import { pathRouter } from "../constants/path";
-import { clearStorage } from "../utils/storage";
+import sessionStorageUtils from "../utils/storage";
 import { useRouter } from "vue-router";
+import { db } from "../firebase";
+import { userStore } from "../stores/user-store";
+import { toast } from "vue3-toastify";
+import { computed, ref } from "vue";
+import { UserDataType } from "../ts/types";
 
 const router = useRouter();
 
-const logout = () => {
-  clearStorage();
-  router.push(pathRouter.login);
+const userStr = userStore();
+
+const loading = ref(false);
+
+const userData = computed<UserDataType | null>(() => userStr.user);
+
+/**
+ * Logs out the user by updating the user's connection status to false in the database,
+ * clearing the storage, and redirecting to the login page.
+ *
+ * @return {Promise<void>} A promise that resolves when the user is logged out successfully,
+ * or rejects with an error message if the logout process fails.
+ */
+const logout = async (): Promise<void> => {
+  loading.value = true;
+  console.log(userStr.user);
+  await updateDoc(doc(db, "users", userStr.user?.id!), {
+    isConnected: false,
+  })
+    .then(() => {
+      sessionStorageUtils.clear();
+      router.push(pathRouter.login);
+      loading.value = false;
+    })
+    .catch(() => {
+      toast.error("Logout failed");
+      loading.value = false;
+    });
 };
 </script>
