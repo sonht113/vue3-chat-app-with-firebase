@@ -1,4 +1,18 @@
 /* import specific icons */
-import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserSecret,
+  faBell,
+  faMessage,
+  faMinus,
+  faXmark,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 
-export const libIcon = [faUserSecret];
+export const libIcon = [
+  faUserSecret,
+  faBell,
+  faMessage,
+  faMinus,
+  faXmark,
+  faChevronDown,
+];

@@ -1,18 +1,21 @@
 <template>
   <div
-    class="h-[70px] w-full fixed top-0 left-0 bg-gray-7 flex items-center justify-between px-8"
+    class="h-[70px] w-full fixed top-0 left-0 bg-gray-7 flex items-center justify-between px-8 z-12"
   >
     <router-link to="/home">
       <q-icon name="chat" size="30px" color="white" class="cursor-pointer" />
     </router-link>
     <div class="flex items-center gap-8">
       <font-awesome-icon
-        :icon="['fas', 'user-secret']"
-        class="text-white text-xl"
+        :icon="['fas', 'bell']"
+        class="text-white text-2xl cursor-pointer"
       />
-      <q-icon name="chat" size="30px" color="white" class="cursor-pointer" />
+      <font-awesome-icon
+        :icon="['fas', 'message']"
+        class="text-white text-2xl cursor-pointer"
+      />
       <div>
-        <q-avatar v-if="userData" size="50px" class="cursor-pointer">
+        <q-avatar v-if="userData" size="40px" class="cursor-pointer">
           <img
             :src="userData.avatar || 'https://cdn.quasar.dev/img/avatar4.jpg'"
           />
@@ -58,7 +61,7 @@
             </div>
           </q-menu>
         </q-avatar>
-        <q-skeleton v-else size="50px" type="circle" />
+        <q-skeleton v-else size="40px" type="circle" />
       </div>
     </div>
   </div>

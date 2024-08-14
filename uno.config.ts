@@ -20,6 +20,11 @@ export default defineConfig({
       warning: colors.yellow,
       error: colors.red,
     },
+    breakpoints: {
+      sm: "240px",
+      md: "768px",
+      lg: "1024px",
+    },
   },
   presets: [
     presetUno(),
