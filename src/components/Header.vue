@@ -68,22 +68,24 @@
 </template>
 <script setup lang="ts">
 import { doc, updateDoc } from "firebase/firestore";
-import { pathRouter } from "../constants/path";
-import sessionStorageUtils from "../utils/storage";
+import { pathRouter } from "@/constants/path";
+import sessionStorageUtils from "@/utils/storage";
 import { useRouter } from "vue-router";
-import { db } from "../firebase";
-import { userStore } from "../stores/user-store";
+import { db } from "@/firebase";
+import { authStore } from "@/stores/auth-store";
 import { toast } from "vue3-toastify";
 import { computed, ref } from "vue";
-import { UserDataType } from "../ts/types";
+import { UserDataType } from "@/ts/types";
+import { chatStore } from "@/stores/chat-store";
 
 const router = useRouter();
 
-const userStr = userStore();
+const authStr = authStore();
+const chatStr = chatStore();
 
 const loading = ref(false);
 
-const userData = computed<UserDataType | null>(() => userStr.user);
+const userData = computed<UserDataType | null>(() => authStr.user);
 
 /**
  * Logs out the user by updating the user's connection status to false in the database,
@@ -94,11 +96,12 @@ const userData = computed<UserDataType | null>(() => userStr.user);
  */
 const logout = async (): Promise<void> => {
   loading.value = true;
-  console.log(userStr.user);
-  await updateDoc(doc(db, "users", userStr.user?.id!), {
+  await updateDoc(doc(db, "users", authStr.user?.id!), {
     isConnected: false,
   })
     .then(() => {
+      chatStr.clearAllRoomsChat();
+      authStr.setUser(null);
       sessionStorageUtils.clear();
       router.push(pathRouter.login);
       loading.value = false;

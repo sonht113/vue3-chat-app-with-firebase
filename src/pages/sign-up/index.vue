@@ -21,9 +21,11 @@ const router = useRouter();
 
 const isPwd = ref(true);
 const loading = ref(false);
+const btnDisabled = ref(false);
 
 const onSubmit = async (values: any) => {
   loading.value = true;
+  btnDisabled.value = true;
   try {
     const response = await createUserWithEmailAndPassword(
       auth,
@@ -52,6 +54,7 @@ const onSubmit = async (values: any) => {
     loading.value = false;
   } catch (err: any) {
     loading.value = false;
+    btnDisabled.value = false;
     if (err.code === EnumModeErrorResponse.EMAIL_ALREADY_IN_USE) {
       return toast.error("Sign up error! Email already in use...");
     }
@@ -122,6 +125,7 @@ const onSubmit = async (values: any) => {
             type="submit"
             size="15px"
             :loading="loading"
+            :disabled="btnDisabled"
           />
         </Form>
         <div class="font-medium text-sm mt-3 text-center">

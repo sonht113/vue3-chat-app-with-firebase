@@ -8,7 +8,7 @@
     </div>
     <slot />
     <div
-      class="fixed top-[70px] right-0 w-[300px] h-screen bg-amber sm:hidden md:block"
+      class="fixed top-[70px] right-0 w-[300px] h-screen sm:hidden md:block bg-gray-2"
     >
       <sidebar-chat />
     </div>
@@ -40,7 +40,12 @@ const chatStr = chatStore();
 const rooms = chatStr.rooms;
 const smallRooms = chatStr.smallRooms;
 
-const onCloseSmallRoom = (id: string) => {
+/**
+ * Closes a small room.
+ *
+ * @param {string} id - The ID of the room to close.
+ */
+const onCloseSmallRoom = (id: string): void => {
   chatStr.closeSmallRoom(id);
 };
 </script>

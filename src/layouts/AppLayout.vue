@@ -1,29 +1,33 @@
 <script setup lang="ts">
 import { doc, getDoc } from "firebase/firestore";
-import { userStore } from "../stores/user-store";
-import sessionStorageUtils from "../utils/storage";
+import { authStore } from "@/stores/auth-store";
+import { globalStore } from "@/stores/global-store";
+import sessionStorageUtils from "@/utils/storage";
 import AppLayoutDefault from "./AppLayoutDefault.vue";
 import BaseLayout from "./BaseLayout.vue";
 import { markRaw, onBeforeMount, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { db } from "../firebase";
-import { UserDataType } from "../ts/types";
+import { db } from "@/firebase";
+import { UserDataType } from "@/ts/types";
 
 const layout = ref();
 const route = useRoute();
-const userStr = userStore();
+const authStr = authStore();
+const globalStr = globalStore();
 
 onBeforeMount(async () => {
-  const user = userStr.user;
+  globalStr.setLoading(true);
+  const user = authStr.user;
   const id = sessionStorageUtils.get("id");
   if (id && !user) {
     await getDoc(doc(db, "users", id)).then((res) => {
       const data = res.data();
       if (data) {
-        userStr.setUser(data as UserDataType);
+        authStr.setUser(data as UserDataType);
       }
     });
   }
+  globalStr.setLoading(false);
 });
 
 watch(

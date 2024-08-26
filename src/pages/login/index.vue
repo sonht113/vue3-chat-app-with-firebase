@@ -8,7 +8,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { EnumModeErrorResponse } from "../../ts/enums";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { userStore } from "../../stores/user-store";
+import { authStore } from "../../stores/auth-store";
 import { UserDataType } from "../../ts/types";
 import sessionStorageUtils from "../../utils/storage";
 
@@ -21,13 +21,15 @@ const schema = {
 
 const router = useRouter();
 
-const store = userStore();
+const store = authStore();
 
 const isPwd = ref(true);
 const loading = ref(false);
+const btnDisabled = ref(false);
 
 const onSubmit = async (values: any) => {
   loading.value = true;
+  btnDisabled.value = true;
   await signInWithEmailAndPassword(auth, values.email, values.password)
     .then(async (res: any) => {
       if (res) {
@@ -56,6 +58,7 @@ const onSubmit = async (values: any) => {
     })
     .catch((err) => {
       loading.value = false;
+      btnDisabled.value = false;
       if (err.code === EnumModeErrorResponse.INVALID_EMAIL) {
         return toast.error("Email invalid...");
       }
@@ -126,7 +129,13 @@ const onSubmit = async (values: any) => {
             </div>
             <div class="invalid-feedback">{{ errors.password }}</div>
           </div>
-          <q-btn color="primary" label="Login" type="submit" size="15px" />
+          <q-btn
+            color="primary"
+            label="Login"
+            type="submit"
+            size="15px"
+            :disabled="btnDisabled"
+          />
         </Form>
         <div class="font-medium text-sm mt-3 text-center">
           <span class="text-gray-6"

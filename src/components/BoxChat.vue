@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[350px] h-[400px] bg-white rounded-t-lg">
+  <div class="relative w-[320px] h-[400px] bg-white rounded-t-lg">
     <div
       class="flex items-center justify-between gap-2 border-b-1 border-b-solid border-b-gray-1"
     >
@@ -8,7 +8,9 @@
       >
         <avatar :size="35" url="https://cdn.quasar.dev/img/avatar4.jpg" />
         <div class="flex flex-col">
-          <span class="font-bold text-gray-6 text-sm">Ho Trong Son</span>
+          <span class="font-bold text-gray-6 text-sm"
+            >Ho Trong Son {{ idRoom }}</span
+          >
           <span class="text-trueGray font-medium text-xs">Đang hoạt động</span>
         </div>
         <font-awesome-icon
@@ -51,17 +53,23 @@
         </div>
       </div>
     </div>
+    <message />
+    <input-chat />
   </div>
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import Avatar from "./Avatar.vue";
+import InputChat from "./InputChat.vue";
+import Message from "./Message.vue";
 import { chatStore } from "../stores/chat-store";
 
 export default defineComponent({
   name: "BoxChat",
   components: {
     Avatar,
+    InputChat,
+    Message,
   },
   props: {
     room: {
@@ -84,6 +92,7 @@ export default defineComponent({
     return {
       onMinimizeRoom,
       onCloseRoom,
+      idRoom,
     };
   },
 });

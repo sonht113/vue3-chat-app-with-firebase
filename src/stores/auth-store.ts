@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 import { UserDataType } from "../ts/types";
 
-export const userStore = defineStore("users", {
+export const authStore = defineStore("users", {
   state: () => {
     return {
       user: null as UserDataType | null,
     };
   },
   actions: {
-    setUser(user: UserDataType) {
+    setUser(user: UserDataType | null) {
       this.user = user;
     },
   },
