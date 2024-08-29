@@ -6,11 +6,14 @@
       <div
         class="flex items-center gap-2 p-2 hover:bg-gray-2 rounded-md cursor-pointer"
       >
-        <avatar :size="35" url="https://cdn.quasar.dev/img/avatar4.jpg" />
+        <avatar
+          :size="35"
+          :url="room.members[idUser!]?.avatar || PATH_AVATAR_DEAULT"
+        />
         <div class="flex flex-col">
-          <span class="font-bold text-gray-6 text-sm"
-            >Ho Trong Son {{ idRoom }}</span
-          >
+          <span class="font-bold text-gray-6 text-sm">{{
+            room.members[idUser!]?.fullname
+          }}</span>
           <span class="text-trueGray font-medium text-xs">Đang hoạt động</span>
         </div>
         <font-awesome-icon
@@ -63,6 +66,10 @@ import Avatar from "./Avatar.vue";
 import InputChat from "./InputChat.vue";
 import Message from "./Message.vue";
 import { chatStore } from "../stores/chat-store";
+import { RoomDataType } from "@/ts/types";
+import type { PropType } from "vue";
+import { authStore } from "@/stores/auth-store";
+import { PATH_AVATAR_DEAULT } from "@/utils/constant";
 
 export default defineComponent({
   name: "BoxChat",
@@ -73,26 +80,30 @@ export default defineComponent({
   },
   props: {
     room: {
-      type: String,
+      type: Object as PropType<RoomDataType>,
       required: true,
     },
   },
   setup(props) {
     const chatStr = chatStore();
-    const idRoom = computed(() => props.room);
+    const authStr = authStore();
+    const room = computed(() => props.room);
+    const idUser = computed(() => authStr.user?.id);
 
     const onMinimizeRoom = () => {
-      chatStr.setSmallRooms(idRoom.value);
+      chatStr.setSmallRooms(room.value);
     };
 
     const onCloseRoom = () => {
-      chatStr.closeRoom(idRoom.value);
+      chatStr.closeRoom(room.value.id);
     };
 
     return {
       onMinimizeRoom,
       onCloseRoom,
-      idRoom,
+      room,
+      idUser,
+      PATH_AVATAR_DEAULT,
     };
   },
 });

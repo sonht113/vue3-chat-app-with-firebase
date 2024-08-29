@@ -2,7 +2,7 @@
   <Header />
   <div class="mt-[70px] relative z-0">
     <div
-      class="fixed top-[70px] left-0 w-[300px] h-screen bg-amber sm:hidden md:hidden lg:block"
+      class="fixed top-[70px] left-0 w-[300px] h-screen bg-white sm:hidden md:hidden lg:block"
     >
       sidebar chat
     </div>
@@ -21,7 +21,8 @@
       <avatar
         v-for="smallRoom in smallRooms"
         :size="50"
-        url="https://cdn.quasar.dev/img/avatar4.jpg"
+        :url="smallRoom.members[idUser!].avatar || PATH_AVATAR_DEAULT"
+        :name="smallRoom.members[idUser!].fullname"
         @click="onCloseSmallRoom(smallRoom)"
       />
     </div>
@@ -34,18 +35,24 @@ import BoxChat from "../components/BoxChat.vue";
 import Avatar from "../components/Avatar.vue";
 
 import { chatStore } from "../stores/chat-store";
+import { computed } from "vue";
+import { RoomDataType } from "@/ts/types";
+import { authStore } from "@/stores/auth-store";
+import { PATH_AVATAR_DEAULT } from "@/utils/constant";
 
 const chatStr = chatStore();
+const authStr = authStore();
 
-const rooms = chatStr.rooms;
-const smallRooms = chatStr.smallRooms;
+const rooms = computed(() => chatStr.rooms);
+const smallRooms = computed(() => chatStr.smallRooms);
+const idUser = computed(() => authStr.user?.id);
 
 /**
  * Closes a small room.
  *
- * @param {string} id - The ID of the room to close.
+ * @param {RoomDataType} room
  */
-const onCloseSmallRoom = (id: string): void => {
-  chatStr.closeSmallRoom(id);
+const onCloseSmallRoom = (room: RoomDataType): void => {
+  chatStr.closeSmallRoom(room);
 };
 </script>

@@ -6,6 +6,9 @@
     <div
       class="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full bg-green border-1 border-solid border-white"
     ></div>
+    <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+      <em>{{ name }}</em>
+    </q-tooltip>
   </div>
 </template>
 
@@ -20,6 +23,10 @@ export default defineComponent({
       default: 40,
     },
     url: {
+      type: String,
+      default: "",
+    },
+    name: {
       type: String,
       default: "",
     },

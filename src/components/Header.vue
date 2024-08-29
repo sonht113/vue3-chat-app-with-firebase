@@ -10,10 +10,17 @@
         :icon="['fas', 'bell']"
         class="text-white text-2xl cursor-pointer"
       />
-      <font-awesome-icon
-        :icon="['fas', 'message']"
-        class="text-white text-2xl cursor-pointer"
-      />
+      <q-btn class="w-[40px] h-[40px] rounded-full">
+        <font-awesome-icon
+          :icon="['fas', 'message']"
+          class="text-white text-xl cursor-pointer"
+        />
+        <q-menu transition-show="jump-down" transition-hide="jump-up">
+          <q-list style="width: 300px">
+            <sidebar-chat height="400px" :show-latest-message="true" />
+          </q-list>
+        </q-menu>
+      </q-btn>
       <div>
         <q-avatar v-if="userData" size="40px" class="cursor-pointer">
           <img
@@ -77,6 +84,7 @@ import { toast } from "vue3-toastify";
 import { computed, ref } from "vue";
 import { UserDataType } from "@/ts/types";
 import { chatStore } from "@/stores/chat-store";
+import SidebarChat from "./SidebarChat.vue";
 
 const router = useRouter();
 
