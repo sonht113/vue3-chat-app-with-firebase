@@ -23,9 +23,7 @@
       </q-btn>
       <div>
         <q-avatar v-if="userData" size="40px" class="cursor-pointer">
-          <img
-            :src="userData.avatar || 'https://cdn.quasar.dev/img/avatar4.jpg'"
-          />
+          <img :src="userData.avatar || PATH_AVATAR_DEAULT" />
           <q-menu>
             <div class="row no-wrap q-pa-md">
               <div class="column">
@@ -46,12 +44,7 @@
               <q-separator vertical inset class="q-mx-md" />
               <div class="column items-center">
                 <q-avatar size="72px">
-                  <img
-                    :src="
-                      userData.avatar ||
-                      'https://cdn.quasar.dev/img/avatar4.jpg'
-                    "
-                  />
+                  <img :src="userData.avatar || PATH_AVATAR_DEAULT" />
                 </q-avatar>
                 <div class="text-subtitle1 q-mt-md q-mb-xs uppercase">
                   {{ userData.fullname }}
@@ -85,6 +78,7 @@ import { computed, ref } from "vue";
 import { UserDataType } from "@/ts/types";
 import { chatStore } from "@/stores/chat-store";
 import SidebarChat from "./SidebarChat.vue";
+import { PATH_AVATAR_DEAULT } from "@/utils/constant";
 
 const router = useRouter();
 
