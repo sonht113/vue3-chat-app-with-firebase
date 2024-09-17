@@ -19,7 +19,7 @@
 Run the following command on your local environment:
 
 ```shell
-git clone --depth=1 https://github.com/sonht113/react-boilerplate-for-starter.git
+git clone --depth=1 https://github.com/sonht113/vue3-chat-app-with-firebase.git
 cd my-project-name
 pnpm install
 ```
