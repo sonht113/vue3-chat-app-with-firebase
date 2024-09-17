@@ -17,7 +17,7 @@
         />
         <q-menu transition-show="jump-down" transition-hide="jump-up">
           <q-list style="width: 300px">
-            <sidebar-chat height="400px" :show-latest-message="true" />
+            <sidebar-chat-header height="400px" />
           </q-list>
         </q-menu>
       </q-btn>
@@ -77,7 +77,7 @@ import { toast } from "vue3-toastify";
 import { computed, ref } from "vue";
 import { UserDataType } from "@/ts/types";
 import { chatStore } from "@/stores/chat-store";
-import SidebarChat from "./SidebarChat.vue";
+import SidebarChatHeader from "./SidebarChatHeader.vue";
 import { PATH_AVATAR_DEAULT } from "@/utils/constant";
 
 const router = useRouter();
