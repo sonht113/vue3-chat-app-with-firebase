@@ -1,6 +1,6 @@
 <template>
   <div
-    class="create-post w-3/4 lg:w-3/4 xl:w-1/2 h-[150px] bg-white mx-auto rounded-b-xl"
+    class="create-post w-4/5 lg:w-4/5 xl:w-2/3 h-[150px] bg-white mx-auto rounded-b-xl"
   >
     <div class="px-10 pt-4 flex flex-col gap-3">
       <span class="text-gray-500">Bạn đang nghĩ gì thế?</span>
@@ -24,7 +24,7 @@
       backdrop-filter="blur(4px) saturate(150%)"
       transition-show="slide-up"
       transition-hide="slide-down"
-      persistent="true"
+      :persistent="true"
     >
       <q-card>
         <q-card-section class="row items-center q-pb-none">

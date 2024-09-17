@@ -17,22 +17,25 @@ export const chatStore = defineStore("chat", {
      * @return {void}
      */
     setRooms(room: RoomDataType): void {
-      const indexRoom = this.rooms.findIndex((r) => r.id === room.id);
-      if (indexRoom > -1) {
-        this.rooms.splice(indexRoom, 1);
-      } else {
+      if (!this.rooms.length && !this.smallRooms.length) {
         this.rooms.push(room);
-      }
-      if (this.rooms.length > 3) {
-        this.smallRooms.push(this.rooms[0]);
-        this.rooms.splice(0, 1);
       } else {
-        const idx = this.smallRooms.findIndex((r) => r.id === room.id);
-        if (idx !== -1) {
-          this.smallRooms.splice(idx, 1);
-          this.rooms.push(room);
-        } else if (this.rooms.findIndex((r) => r.id === room.id) < 0) {
-          this.rooms.push(room);
+        const indexRoom = this.rooms.findIndex((r) => r.id === room.id);
+        if (indexRoom > -1) {
+          if (this.rooms.length + 1 > 3) {
+            this.smallRooms.push(this.rooms[0]);
+            this.rooms.splice(indexRoom, 1);
+          }
+        } else {
+          const indexSmallRoom = this.smallRooms.findIndex(
+            (r) => r.id === room.id,
+          );
+          if (indexSmallRoom > -1) {
+            this.smallRooms.splice(indexRoom, 1);
+            this.rooms.push(room);
+          } else {
+            this.rooms.push(room);
+          }
         }
       }
     },

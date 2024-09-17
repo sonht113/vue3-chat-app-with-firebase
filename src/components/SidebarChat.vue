@@ -32,8 +32,8 @@
           <small
             v-if="showLatestMessage"
             class="text-gray-500 group-hover:text-white"
-            >Hello em</small
-          >
+            >{{
+          }}</small>
         </div>
       </div>
     </div>
@@ -115,9 +115,7 @@ const roomClick = async (friend: UserDataType): Promise<void> => {
 const createRoom = async (
   room: Pick<RoomDataType, "id" | "latestMessage" | "members">,
 ) => {
-  const snapshot = await setDoc(doc(db, "rooms", room.id), { ...room });
-
-  console.log(snapshot);
+  await setDoc(doc(db, "rooms", room.id), { ...room });
 };
 
 /**

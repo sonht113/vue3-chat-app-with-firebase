@@ -7,6 +7,7 @@ import {
   faXmark,
   faChevronDown,
   faImage,
+  faClose,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const libIcon = [
@@ -17,4 +18,5 @@ export const libIcon = [
   faXmark,
   faChevronDown,
   faImage,
+  faClose,
 ];

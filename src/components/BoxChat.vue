@@ -56,20 +56,59 @@
         </div>
       </div>
     </div>
-    <message />
-    <input-chat />
+    <div class="relative h-[285px]">
+      <div
+        v-if="loadingMessage"
+        class="absolute top-0 left-0 flex items-center justify-center gap-3 w-full p-1 h-[290px] bg-white z-2"
+      >
+        <q-spinner-ios color="accent" size="2em" />
+      </div>
+      <div class="overflow-y-auto h-[285px] z-1">
+        <message
+          v-for="message in messages"
+          :key="message.id"
+          :mess="message"
+          :room="room"
+        />
+      </div>
+    </div>
+    <input-chat
+      v-model:content="contentMessage"
+      v-model:files="images"
+      :loading="loadingSendMessage"
+      @sendMessage="sendMessage"
+    />
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  ref,
+  nextTick,
+  watch,
+} from "vue";
+import { v4 as uuid } from "uuid";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import Avatar from "./Avatar.vue";
 import InputChat from "./InputChat.vue";
 import Message from "./Message.vue";
 import { chatStore } from "../stores/chat-store";
-import { RoomDataType } from "@/ts/types";
+import { MessageDataType, RoomDataType } from "@/ts/types";
 import type { PropType } from "vue";
 import { authStore } from "@/stores/auth-store";
 import { PATH_AVATAR_DEAULT } from "@/utils/constant";
+import { db } from "@/firebase";
 
 export default defineComponent({
   name: "BoxChat",
@@ -90,13 +129,98 @@ export default defineComponent({
     const room = computed(() => props.room);
     const idUser = computed(() => authStr.user?.id);
 
+    const messages = ref<MessageDataType[]>([]);
+
+    const idMessage = ref<string>("");
+
+    const loadingMessage = ref(true);
+
+    const loadingSendMessage = ref(false);
+
+    const contentMessage = ref<string>();
+
+    const images = ref<string[]>([]);
+
     const onMinimizeRoom = () => {
       chatStr.setSmallRooms(room.value);
     };
 
-    const onCloseRoom = () => {
+    /**
+     * Closes a room.
+     * @return {void}
+     */
+    const onCloseRoom = (): void => {
       chatStr.closeRoom(room.value.id);
     };
+
+    /**
+     * Send a message to the current room.
+     * @return {Promise<void>}
+     */
+    const sendMessage = async (): Promise<void> => {
+      if (contentMessage.value || images.value.length) {
+        loadingSendMessage.value = true;
+        const id = uuid();
+        idMessage.value = id;
+        await setDoc(doc(db, "messages", id), {
+          images: images.value,
+          content: contentMessage.value || "",
+          senderId: idUser.value,
+          roomId: room.value.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+          .then(async () => {
+            await updateDoc(doc(db, "rooms", room.value.id), {
+              latestMessage: contentMessage.value
+                ? contentMessage.value
+                : `Đã gửi ${images.value.length} ảnh`,
+            });
+            images.value = [];
+            contentMessage.value = "";
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        loadingSendMessage.value = false;
+      }
+    };
+
+    watch(messages.value, () => {
+      if (messages.value.length) {
+        nextTick(() => {
+          document.querySelector(".q-pa-md:last-child")?.scrollIntoView({
+            behavior: "smooth",
+          });
+          loadingMessage.value = false;
+        });
+      }
+    });
+
+    onMounted(async () => {
+      loadingMessage.value = true;
+      const q = query(
+        collection(db, "messages"),
+        where("roomId", "==", room.value.id),
+        orderBy("createdAt"),
+      );
+      const listMess: MessageDataType[] = [];
+      const unSub = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          listMess.push(doc.data() as MessageDataType);
+        });
+        if (!messages.value.length) {
+          messages.value = [...listMess];
+        } else {
+          messages.value.push(listMess[listMess.length - 1]);
+        }
+        nextTick(() => {
+          document.querySelector(".q-pa-md:last-child")?.scrollIntoView();
+          loadingMessage.value = false;
+        });
+      });
+      return () => unSub();
+    });
 
     return {
       onMinimizeRoom,
@@ -104,6 +228,12 @@ export default defineComponent({
       room,
       idUser,
       PATH_AVATAR_DEAULT,
+      messages,
+      contentMessage,
+      sendMessage,
+      loadingMessage,
+      images,
+      loadingSendMessage,
     };
   },
 });
